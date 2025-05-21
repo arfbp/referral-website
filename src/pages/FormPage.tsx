@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Youtube, 
-  Tiktok, 
+  Twitter, // Changed from Tiktok to Twitter, which we'll use for TikTok
   Instagram, 
   Facebook, 
   MessageSquare
@@ -349,7 +349,7 @@ const CreatorForm = () => {
                   onCheckedChange={() => handlePlatformToggle('tiktok')}
                 />
                 <Label htmlFor="tiktok" className="flex items-center space-x-1 text-white">
-                  <Tiktok className="h-4 w-4" />
+                  <Twitter className="h-4 w-4" /> {/* Using Twitter icon for TikTok temporarily */}
                   <span>Tiktok</span>
                 </Label>
               </div>
