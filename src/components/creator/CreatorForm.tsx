@@ -25,6 +25,7 @@ const CreatorForm = () => {
     paymentAccount: '',
     otherPayment: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +53,7 @@ const CreatorForm = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Validate form
@@ -74,13 +75,74 @@ const CreatorForm = () => {
       return;
     }
     
-    // Process form submission
-    toast({
-      title: "Form submitted successfully!",
-      description: "We'll review your application and get back to you soon.",
-    });
-    
-    console.log("Form Data:", formData);
+    setIsSubmitting(true);
+
+    try {
+      // Replace this URL with your Google Sheets Web App URL
+      const googleSheetsUrl = prompt("Enter your Google Sheets Web App URL:");
+      
+      if (!googleSheetsUrl) {
+        toast({
+          title: "Submission cancelled",
+          description: "You need to provide a Google Sheets URL to submit the form.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Format data for Google Sheets
+      const formattedData = {
+        ...formData,
+        activePlatforms: formData.activePlatforms.join(", "),
+        timestamp: new Date().toISOString(),
+      };
+      
+      // Send data to Google Sheets
+      const response = await fetch(googleSheetsUrl, {
+        method: "POST",
+        mode: "no-cors", // This is needed for Google Sheets Web App
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formattedData),
+      });
+      
+      // Since no-cors doesn't return status, we'll just assume it worked
+      toast({
+        title: "Form submitted successfully!",
+        description: "Your application has been submitted to our database.",
+      });
+      
+      console.log("Form Data:", formData);
+
+      // Optional: Reset form after submission
+      setFormData({
+        channelName: '',
+        whatsappNumber: '',
+        category: 'anime',
+        userId: '',
+        activationCode: '',
+        channelLink: '',
+        activePlatforms: [],
+        followers: '',
+        city: '',
+        occupation: '',
+        paymentMethod: '',
+        paymentAccount: '',
+        otherPayment: '',
+      });
+      
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({
+        title: "Submission failed",
+        description: "There was a problem submitting your form. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -232,8 +294,12 @@ const CreatorForm = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full rounded-lg btn-primary">
-            Submit Application
+          <Button 
+            type="submit" 
+            className="w-full rounded-lg btn-primary"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit Application'}
           </Button>
         </form>
       </CardContent>
