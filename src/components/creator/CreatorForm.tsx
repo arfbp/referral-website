@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
@@ -8,6 +7,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import CategorySelector from './CategorySelector';
 import SocialPlatforms from './SocialPlatforms';
 import PaymentMethodSelector from './PaymentMethodSelector';
+
+// Hardcoded Google Sheets Web App URL
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDv-_C2CMCwDnDiPJkrPn1f5zaIDyk_aPV4c5CNpxfWDSfesbZHbXh_dKy35xhLnVV/exec";
 
 const CreatorForm = () => {
   const [formData, setFormData] = useState({
@@ -78,19 +80,6 @@ const CreatorForm = () => {
     setIsSubmitting(true);
 
     try {
-      // Replace this URL with your Google Sheets Web App URL
-      const googleSheetsUrl = prompt("Enter your Google Sheets Web App URL:");
-      
-      if (!googleSheetsUrl) {
-        toast({
-          title: "Submission cancelled",
-          description: "You need to provide a Google Sheets URL to submit the form.",
-          variant: "destructive"
-        });
-        setIsSubmitting(false);
-        return;
-      }
-
       // Format data for Google Sheets
       const formattedData = {
         ...formData,
@@ -98,8 +87,8 @@ const CreatorForm = () => {
         timestamp: new Date().toISOString(),
       };
       
-      // Send data to Google Sheets
-      const response = await fetch(googleSheetsUrl, {
+      // Send data to Google Sheets using the hardcoded URL
+      const response = await fetch(GOOGLE_SHEETS_URL, {
         method: "POST",
         mode: "no-cors", // This is needed for Google Sheets Web App
         headers: {
@@ -116,7 +105,7 @@ const CreatorForm = () => {
       
       console.log("Form Data:", formData);
 
-      // Optional: Reset form after submission
+      // Reset form after submission
       setFormData({
         channelName: '',
         whatsappNumber: '',
