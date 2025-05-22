@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +18,7 @@ interface UserData {
 const Profile = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState<UserData | null>(null);
-  const referralLink = `${window.location.origin}/?ref=${userData?.referralCode || ''}`;
+  const referralLink = `${window.location.origin}/form?ref=${userData?.referralCode || ''}`;
   
   useEffect(() => {
     // Check if user is logged in
@@ -120,6 +119,9 @@ const Profile = () => {
                   </div>
                   <CopyButton text={referralLink} />
                 </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  This link directs friends to our creator application form with your referral code.
+                </p>
               </div>
               
               <Separator />

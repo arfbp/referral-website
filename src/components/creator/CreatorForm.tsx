@@ -1,17 +1,22 @@
+
 import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import CategorySelector from './CategorySelector';
-import SocialPlatforms from './SocialPlatforms';
-import PaymentMethodSelector from './PaymentMethodSelector';
+import { useReferralCode } from '@/hooks/useReferralCode';
+import FormHeader from './FormHeader';
+import BasicInfoFields from './BasicInfoFields';
+import PlatformAndLocationFields from './PlatformAndLocationFields';
+import PaymentFields from './PaymentFields';
+import FormSubmitButton from './FormSubmitButton';
 
 // Hardcoded Google Sheets Web App URL
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDv-_C2CMCwDnDiPJkrPn1f5zaIDyk_aPV4c5CNpxfWDSfesbZHbXh_dKy35xhLnVV/exec";
 
 const CreatorForm = () => {
+  const referralCode = useReferralCode();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+  
   const [formData, setFormData] = useState({
     channelName: '',
     whatsappNumber: '',
@@ -26,9 +31,8 @@ const CreatorForm = () => {
     paymentMethod: '',
     paymentAccount: '',
     otherPayment: '',
+    referredBy: referralCode || '', // Store the referral code
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -120,6 +124,7 @@ const CreatorForm = () => {
         paymentMethod: '',
         paymentAccount: '',
         otherPayment: '',
+        referredBy: referralCode || '', // Maintain the referral code
       });
       
     } catch (error) {
@@ -134,162 +139,49 @@ const CreatorForm = () => {
     }
   };
 
+  // Display the referral code if present
+  React.useEffect(() => {
+    if (referralCode) {
+      setFormData(prev => ({ ...prev, referredBy: referralCode }));
+      toast({
+        title: "Referral Detected",
+        description: `You were referred by code: ${referralCode}`,
+      });
+    }
+  }, [referralCode, toast]);
+
   return (
     <Card className="glass-morphism w-full max-w-2xl mt-8">
       <CardContent className="pt-6">
-        <h2 className="text-2xl font-semibold mb-6 text-center text-white">Creator Application Form</h2>
+        <FormHeader />
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="channelName" className="text-white">Nama Channel (Bstation)</Label>
-            <Input 
-              id="channelName"
-              name="channelName"
-              placeholder="Your channel name"
-              required
-              className="rounded-lg"
-              value={formData.channelName}
-              onChange={handleInputChange}
-            />
-          </div>
+          {/* Display referral info if present */}
+          {referralCode && (
+            <div className="p-3 bg-green-100/20 border border-green-200 rounded-lg text-white">
+              <p className="text-sm">You were referred by: <span className="font-medium">{referralCode}</span></p>
+            </div>
+          )}
+          
+          <BasicInfoFields 
+            formData={formData} 
+            onChange={handleInputChange}
+            onCategoryChange={handleCategoryChange}
+          />
+          
+          <PlatformAndLocationFields 
+            formData={formData}
+            onChange={handleInputChange}
+            onPlatformToggle={handlePlatformToggle}
+          />
+          
+          <PaymentFields 
+            formData={formData}
+            onChange={handleInputChange}
+            onMethodChange={handlePaymentMethodChange}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="whatsappNumber" className="text-white">Nomor Whatsapp</Label>
-            <Input 
-              id="whatsappNumber"
-              name="whatsappNumber"
-              placeholder="628xxxxxxxxxx"
-              required
-              className="rounded-lg"
-              value={formData.whatsappNumber}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-white">Kategori</Label>
-            <CategorySelector 
-              selectedCategory={formData.category} 
-              onChange={handleCategoryChange} 
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="userId" className="text-white">UID (User ID, bisa cek di profile)</Label>
-            <Input 
-              id="userId"
-              name="userId"
-              placeholder="Your User ID"
-              required
-              className="rounded-lg"
-              value={formData.userId}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="activationCode" className="text-white">Kode Aktivasi</Label>
-            <Input 
-              id="activationCode"
-              name="activationCode"
-              placeholder="Enter activation code"
-              required
-              className="rounded-lg"
-              value={formData.activationCode}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="channelLink" className="text-white">Link Channel kamu (YT / Tiktok / Platform Lain)</Label>
-            <Input 
-              id="channelLink"
-              name="channelLink"
-              placeholder="https://"
-              required
-              className="rounded-lg"
-              value={formData.channelLink}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-white">Di Platform apa paling aktif (pilih minimal satu)</Label>
-            <SocialPlatforms 
-              activePlatforms={formData.activePlatforms} 
-              onPlatformToggle={handlePlatformToggle} 
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="followers" className="text-white">Jumlah Follower / Subscriber</Label>
-            <Input 
-              id="followers"
-              name="followers"
-              placeholder="e.g. 5000"
-              required
-              className="rounded-lg"
-              value={formData.followers}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="city" className="text-white">Dikota mana kamu tinggal</Label>
-            <Input 
-              id="city"
-              name="city"
-              placeholder="Nama kota"
-              required
-              className="rounded-lg"
-              value={formData.city}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="occupation" className="text-white">Pekerjaan sehari-hari</Label>
-            <Input 
-              id="occupation"
-              name="occupation"
-              placeholder="Pekerjaan kamu"
-              required
-              className="rounded-lg"
-              value={formData.occupation}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label className="text-white">Rekening/Ewallet</Label>
-            <PaymentMethodSelector
-              selectedMethod={formData.paymentMethod}
-              otherPayment={formData.otherPayment}
-              onMethodChange={handlePaymentMethodChange}
-              onOtherPaymentChange={handleInputChange}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="paymentAccount" className="text-white">Rekening/Ewallet dan atas nama (xxx-a/n)</Label>
-            <Input 
-              id="paymentAccount"
-              name="paymentAccount"
-              placeholder="e.g. 1234567890 a/n John Doe"
-              required
-              className="rounded-lg"
-              value={formData.paymentAccount}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <Button 
-            type="submit" 
-            className="w-full rounded-lg btn-primary"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit Application'}
-          </Button>
+          <FormSubmitButton isSubmitting={isSubmitting} />
         </form>
       </CardContent>
     </Card>
