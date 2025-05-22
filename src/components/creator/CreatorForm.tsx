@@ -31,7 +31,7 @@ const CreatorForm = () => {
     paymentMethod: '',
     paymentAccount: '',
     otherPayment: '',
-    referredBy: referralCode || '', // Store the referral code
+    referralCode: referralCode || '', // Store the referral code in a dedicated field
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,6 +89,7 @@ const CreatorForm = () => {
         ...formData,
         activePlatforms: formData.activePlatforms.join(", "),
         timestamp: new Date().toISOString(),
+        // Make sure referralCode is sent as a separate field
       };
       
       // Send data to Google Sheets using the hardcoded URL
@@ -124,7 +125,7 @@ const CreatorForm = () => {
         paymentMethod: '',
         paymentAccount: '',
         otherPayment: '',
-        referredBy: referralCode || '', // Maintain the referral code
+        referralCode: referralCode || '', // Maintain the referral code
       });
       
     } catch (error) {
@@ -142,7 +143,7 @@ const CreatorForm = () => {
   // Display the referral code if present
   React.useEffect(() => {
     if (referralCode) {
-      setFormData(prev => ({ ...prev, referredBy: referralCode }));
+      setFormData(prev => ({ ...prev, referralCode }));
       toast({
         title: "Referral Detected",
         description: `You were referred by code: ${referralCode}`,
@@ -153,16 +154,9 @@ const CreatorForm = () => {
   return (
     <Card className="glass-morphism w-full max-w-2xl mt-8">
       <CardContent className="pt-6">
-        <FormHeader />
+        <FormHeader referralCode={referralCode} />
         
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Display referral info if present */}
-          {referralCode && (
-            <div className="p-3 bg-green-100/20 border border-green-200 rounded-lg text-white">
-              <p className="text-sm">You were referred by: <span className="font-medium">{referralCode}</span></p>
-            </div>
-          )}
-          
           <BasicInfoFields 
             formData={formData} 
             onChange={handleInputChange}
