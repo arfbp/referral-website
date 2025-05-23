@@ -17,8 +17,8 @@ const SignUp = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    whatsappNumber: '', // Added WhatsApp number field
-    accountNumber: '', // Added account number field
+    whatsappNumber: '',
+    accountNumber: '',
     password: '',
     confirmPassword: '',
   });
@@ -103,7 +103,7 @@ const SignUp = () => {
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
+          <Label htmlFor="name" className="block">Full Name</Label>
           <Input 
             id="name"
             name="name" 
@@ -111,11 +111,12 @@ const SignUp = () => {
             required
             value={formData.name}
             onChange={handleChange}
+            className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="email">Email Address</Label>
+          <Label htmlFor="email" className="block">Email Address</Label>
           <Input 
             id="email"
             name="email" 
@@ -124,11 +125,12 @@ const SignUp = () => {
             required
             value={formData.email}
             onChange={handleChange}
+            className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+          <Label htmlFor="whatsappNumber" className="block">WhatsApp Number</Label>
           <Input 
             id="whatsappNumber"
             name="whatsappNumber" 
@@ -137,11 +139,12 @@ const SignUp = () => {
             required
             value={formData.whatsappNumber}
             onChange={handleChange}
+            className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="accountNumber">Account Number with Name</Label>
+          <Label htmlFor="accountNumber" className="block">Account Number with Name</Label>
           <Input 
             id="accountNumber"
             name="accountNumber" 
@@ -150,11 +153,12 @@ const SignUp = () => {
             required
             value={formData.accountNumber}
             onChange={handleChange}
+            className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="block">Password</Label>
           <Input 
             id="password"
             name="password" 
@@ -164,11 +168,12 @@ const SignUp = () => {
             minLength={6}
             value={formData.password}
             onChange={handleChange}
+            className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
+          <Label htmlFor="confirmPassword" className="block">Confirm Password</Label>
           <Input 
             id="confirmPassword"
             name="confirmPassword" 
@@ -178,6 +183,7 @@ const SignUp = () => {
             minLength={6}
             value={formData.confirmPassword}
             onChange={handleChange}
+            className="w-full"
           />
         </div>
         
