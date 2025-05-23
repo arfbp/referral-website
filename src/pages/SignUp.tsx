@@ -1,11 +1,14 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/components/AuthLayout';
+
+// Hardcoded Google Sheets Web App URL
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyCOvqcTULiqLUe5Cs-ZhHFchuWRrVDsw_SJwbdzKYElNhYupWfBMz5LM7KkY70j2e2/exec";
 
 const SignUp = () => {
   const { toast } = useToast();
@@ -14,6 +17,8 @@ const SignUp = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    whatsappNumber: '', // Added WhatsApp number field
+    accountNumber: '', // Added account number field
     password: '',
     confirmPassword: '',
   });
@@ -23,7 +28,7 @@ const SignUp = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -38,19 +43,32 @@ const SignUp = () => {
       return;
     }
 
-    // Simulate API call
-    setTimeout(() => {
-      // Store user data in localStorage (this would be a real API call in production)
+    try {
+      // Generate user data
       const userData = {
         id: `user_${Date.now()}`,
         name: formData.name,
         email: formData.email,
+        whatsappNumber: formData.whatsappNumber,
+        accountNumber: formData.accountNumber,
         referralCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
-        referrals: []
+        referrals: [],
+        timestamp: new Date().toISOString(),
       };
 
+      // Store in localStorage
       localStorage.setItem('userData', JSON.stringify(userData));
       localStorage.setItem('isLoggedIn', 'true');
+      
+      // Send data to Google Sheets
+      await fetch(GOOGLE_SHEETS_URL, {
+        method: "POST",
+        mode: "no-cors", // This is needed for Google Sheets Web App
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
       
       toast({
         title: "Account created",
@@ -59,7 +77,16 @@ const SignUp = () => {
       
       setIsLoading(false);
       navigate('/profile');
-    }, 1000);
+      
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast({
+        title: "Registration failed",
+        description: "There was a problem creating your account. Please try again.",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+    }
   };
 
   const footer = (
@@ -96,6 +123,32 @@ const SignUp = () => {
             placeholder="you@example.com"
             required
             value={formData.email}
+            onChange={handleChange}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+          <Input 
+            id="whatsappNumber"
+            name="whatsappNumber" 
+            type="text" 
+            placeholder="Your WhatsApp number"
+            required
+            value={formData.whatsappNumber}
+            onChange={handleChange}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="accountNumber">Account Number with Name</Label>
+          <Input 
+            id="accountNumber"
+            name="accountNumber" 
+            type="text" 
+            placeholder="Bank account number and name"
+            required
+            value={formData.accountNumber}
             onChange={handleChange}
           />
         </div>
