@@ -146,7 +146,7 @@ const SignUp = () => {
             id="accountNumber"
             name="accountNumber" 
             type="text" 
-            placeholder="Bank account number and name"
+            placeholder="Example: 1234567890 a/n Ardhi"
             required
             value={formData.accountNumber}
             onChange={handleChange}
