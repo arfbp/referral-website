@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import Footer from './Footer';
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -11,7 +12,7 @@ interface AuthLayoutProps {
 
 const AuthLayout = ({ children, title, description, footer }: AuthLayoutProps) => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-brand-light to-white p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-brand-light to-white p-4">
       <div className="absolute top-0 left-0 w-full h-64 bg-gradient-hero opacity-20" />
       
       <Card className="w-full max-w-md shadow-lg animate-fade-in">
@@ -24,6 +25,8 @@ const AuthLayout = ({ children, title, description, footer }: AuthLayoutProps) =
         
         {footer && <CardFooter>{footer}</CardFooter>}
       </Card>
+      
+      <Footer />
     </div>
   );
 };

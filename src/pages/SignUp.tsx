@@ -103,20 +103,22 @@ const SignUp = () => {
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="name" className="block">Full Name</Label>
+          <Label htmlFor="name">Full Name</Label>
           <Input 
             id="name"
             name="name" 
-            placeholder="Your name"
+            type="text"
+            placeholder="Your full name"
             required
             value={formData.name}
             onChange={handleChange}
+            autoComplete="name"
             className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="email" className="block">Email Address</Label>
+          <Label htmlFor="email">Email Address</Label>
           <Input 
             id="email"
             name="email" 
@@ -125,26 +127,28 @@ const SignUp = () => {
             required
             value={formData.email}
             onChange={handleChange}
+            autoComplete="email"
             className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="whatsappNumber" className="block">WhatsApp Number</Label>
+          <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
           <Input 
             id="whatsappNumber"
             name="whatsappNumber" 
-            type="text" 
+            type="tel" 
             placeholder="Your WhatsApp number"
             required
             value={formData.whatsappNumber}
             onChange={handleChange}
+            autoComplete="tel"
             className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="accountNumber" className="block">Account Number with Name</Label>
+          <Label htmlFor="accountNumber">Account Number with Name</Label>
           <Input 
             id="accountNumber"
             name="accountNumber" 
@@ -158,7 +162,7 @@ const SignUp = () => {
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="password" className="block">Password</Label>
+          <Label htmlFor="password">Password</Label>
           <Input 
             id="password"
             name="password" 
@@ -168,12 +172,13 @@ const SignUp = () => {
             minLength={6}
             value={formData.password}
             onChange={handleChange}
+            autoComplete="new-password"
             className="w-full"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword" className="block">Confirm Password</Label>
+          <Label htmlFor="confirmPassword">Confirm Password</Label>
           <Input 
             id="confirmPassword"
             name="confirmPassword" 
@@ -183,6 +188,7 @@ const SignUp = () => {
             minLength={6}
             value={formData.confirmPassword}
             onChange={handleChange}
+            autoComplete="new-password"
             className="w-full"
           />
         </div>

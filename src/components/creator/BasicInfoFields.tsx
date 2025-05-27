@@ -10,7 +10,6 @@ interface BasicInfoFieldsProps {
     whatsappNumber: string;
     category: string;
     userId: string;
-    activationCode: string;
     channelLink: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
