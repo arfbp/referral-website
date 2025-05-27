@@ -7,33 +7,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AuthLayout from '@/components/AuthLayout';
 
-// Hardcoded Google Sheets Web App URL
+// Google Sheets Web App URL
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyCOvqcTULiqLUe5Cs-ZhHFchuWRrVDsw_SJwbdzKYElNhYupWfBMz5LM7KkY70j2e2/exec";
 
 const SignUp = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    whatsappNumber: '',
-    accountNumber: '',
-    password: '',
-    confirmPassword: '',
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+  
+  // Form state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+  const [accountNumber, setAccountNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
     // Validate password match
-    if (formData.password !== formData.confirmPassword) {
+    if (password !== confirmPassword) {
       toast({
         title: "Passwords don't match",
         description: "Please ensure both passwords are identical.",
@@ -47,10 +42,10 @@ const SignUp = () => {
       // Generate user data
       const userData = {
         id: `user_${Date.now()}`,
-        name: formData.name,
-        email: formData.email,
-        whatsappNumber: formData.whatsappNumber,
-        accountNumber: formData.accountNumber,
+        name: name,
+        email: email,
+        whatsappNumber: whatsappNumber,
+        accountNumber: accountNumber,
         referralCode: Math.random().toString(36).substring(2, 8).toUpperCase(),
         referrals: [],
         timestamp: new Date().toISOString(),
@@ -106,12 +101,11 @@ const SignUp = () => {
           <Label htmlFor="name">Full Name</Label>
           <Input 
             id="name"
-            name="name" 
             type="text"
             placeholder="Your full name"
             required
-            value={formData.name}
-            onChange={handleChange}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
         </div>
         
@@ -119,38 +113,35 @@ const SignUp = () => {
           <Label htmlFor="email">Email Address</Label>
           <Input 
             id="email"
-            name="email" 
             type="email" 
             placeholder="you@example.com"
             required
-            value={formData.email}
-            onChange={handleChange}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+          <Label htmlFor="whatsapp">WhatsApp Number</Label>
           <Input 
-            id="whatsappNumber"
-            name="whatsappNumber" 
+            id="whatsapp"
             type="tel" 
             placeholder="Your WhatsApp number"
             required
-            value={formData.whatsappNumber}
-            onChange={handleChange}
+            value={whatsappNumber}
+            onChange={(e) => setWhatsappNumber(e.target.value)}
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="accountNumber">Account Number with Name</Label>
+          <Label htmlFor="account">Account Number with Name</Label>
           <Input 
-            id="accountNumber"
-            name="accountNumber" 
+            id="account"
             type="text" 
             placeholder="Example: 1234567890 a/n Ardhi"
             required
-            value={formData.accountNumber}
-            onChange={handleChange}
+            value={accountNumber}
+            onChange={(e) => setAccountNumber(e.target.value)}
           />
         </div>
         
@@ -158,13 +149,12 @@ const SignUp = () => {
           <Label htmlFor="password">Password</Label>
           <Input 
             id="password"
-            name="password" 
             type="password" 
             placeholder="Create a password"
             required
             minLength={6}
-            value={formData.password}
-            onChange={handleChange}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
         
@@ -172,13 +162,12 @@ const SignUp = () => {
           <Label htmlFor="confirmPassword">Confirm Password</Label>
           <Input 
             id="confirmPassword"
-            name="confirmPassword" 
             type="password" 
             placeholder="Confirm your password"
             required
             minLength={6}
-            value={formData.confirmPassword}
-            onChange={handleChange}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
         
