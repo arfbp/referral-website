@@ -63,7 +63,7 @@ const SignUp = () => {
       // Send data to Google Sheets
       await fetch(GOOGLE_SHEETS_URL, {
         method: "POST",
-        mode: "no-cors", // This is needed for Google Sheets Web App
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -112,8 +112,6 @@ const SignUp = () => {
             required
             value={formData.name}
             onChange={handleChange}
-            autoComplete="name"
-            className="w-full"
           />
         </div>
         
@@ -127,8 +125,6 @@ const SignUp = () => {
             required
             value={formData.email}
             onChange={handleChange}
-            autoComplete="email"
-            className="w-full"
           />
         </div>
         
@@ -142,8 +138,6 @@ const SignUp = () => {
             required
             value={formData.whatsappNumber}
             onChange={handleChange}
-            autoComplete="tel"
-            className="w-full"
           />
         </div>
         
@@ -157,7 +151,6 @@ const SignUp = () => {
             required
             value={formData.accountNumber}
             onChange={handleChange}
-            className="w-full"
           />
         </div>
         
@@ -172,8 +165,6 @@ const SignUp = () => {
             minLength={6}
             value={formData.password}
             onChange={handleChange}
-            autoComplete="new-password"
-            className="w-full"
           />
         </div>
         
@@ -188,8 +179,6 @@ const SignUp = () => {
             minLength={6}
             value={formData.confirmPassword}
             onChange={handleChange}
-            autoComplete="new-password"
-            className="w-full"
           />
         </div>
         
