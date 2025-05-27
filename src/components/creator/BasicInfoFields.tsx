@@ -68,19 +68,6 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ formData, onChange, o
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="activationCode" className="text-white">Kode Aktivasi</Label>
-        <Input 
-          id="activationCode"
-          name="activationCode"
-          placeholder="Enter activation code"
-          required
-          className="rounded-lg"
-          value={formData.activationCode}
-          onChange={onChange}
-        />
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="channelLink" className="text-white">Link Channel kamu (YT / Tiktok / Platform Lain)</Label>
         <Input 
           id="channelLink"

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,7 +21,6 @@ const CreatorForm = () => {
     whatsappNumber: '',
     category: 'anime',
     userId: '',
-    activationCode: '',
     channelLink: '',
     activePlatforms: [] as string[],
     followers: '',
@@ -116,7 +114,6 @@ const CreatorForm = () => {
         whatsappNumber: '',
         category: 'anime',
         userId: '',
-        activationCode: '',
         channelLink: '',
         activePlatforms: [],
         followers: '',
