@@ -8,6 +8,7 @@ interface PaymentFieldsProps {
   formData: {
     paymentMethod: string;
     paymentAccount: string;
+    accountName: string;
     otherPayment: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -15,6 +16,8 @@ interface PaymentFieldsProps {
 }
 
 const PaymentFields: React.FC<PaymentFieldsProps> = ({ formData, onChange, onMethodChange }) => {
+  const isEwallet = ['Gopay', 'Ovo', 'DANA', 'ShopeePay'].includes(formData.paymentMethod);
+  
   return (
     <>
       <div className="space-y-2">
@@ -28,17 +31,34 @@ const PaymentFields: React.FC<PaymentFieldsProps> = ({ formData, onChange, onMet
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="paymentAccount" className="text-white">Rekening/Ewallet dan atas nama (xxx-a/n)</Label>
+        <Label htmlFor="paymentAccount" className="text-white">
+          {isEwallet ? 'Nomor Ewallet' : 'Nomor Rekening'}
+        </Label>
         <Input 
           id="paymentAccount"
           name="paymentAccount"
-          placeholder="e.g. 1234567890 a/n John Doe"
+          placeholder={isEwallet ? "e.g. 081234567890" : "e.g. 1234567890"}
           required
           className="rounded-lg"
           value={formData.paymentAccount}
           onChange={onChange}
         />
       </div>
+
+      {!isEwallet && formData.paymentMethod && formData.paymentMethod !== 'Other' && (
+        <div className="space-y-2">
+          <Label htmlFor="accountName" className="text-white">Atas Nama Rekening</Label>
+          <Input 
+            id="accountName"
+            name="accountName"
+            placeholder="e.g. John Doe"
+            required
+            className="rounded-lg"
+            value={formData.accountName}
+            onChange={onChange}
+          />
+        </div>
+      )}
     </>
   );
 };

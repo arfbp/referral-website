@@ -6,7 +6,7 @@ import { validateNumberInput } from '@/utils/validation';
 
 interface BasicInfoFieldsProps {
   formData: {
-    name: string;
+    channelName: string;
     whatsappNumber: string;
     uid: string;
     followers: string;
@@ -31,14 +31,14 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ formData, onChange })
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="name" className="text-white">Nama Lengkap</Label>
+        <Label htmlFor="channelName" className="text-white">Nama Lengkap</Label>
         <Input 
-          id="name"
-          name="name"
+          id="channelName"
+          name="channelName"
           placeholder="Masukkan nama lengkap Anda"
           required
           className="rounded-lg"
-          value={formData.name}
+          value={formData.channelName}
           onChange={onChange}
         />
       </div>

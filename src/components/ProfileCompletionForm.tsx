@@ -22,7 +22,10 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [paymentAccount, setPaymentAccount] = useState('');
+  const [accountName, setAccountName] = useState('');
   const [otherPayment, setOtherPayment] = useState('');
+
+  const isEwallet = ['Gopay', 'Ovo', 'DANA', 'ShopeePay'].includes(paymentMethod);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -35,6 +38,7 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
         whatsappNumber: whatsappNumber,
         paymentMethod: paymentMethod === 'Other' ? otherPayment : paymentMethod,
         paymentAccount: paymentAccount,
+        accountName: isEwallet ? '' : accountName,
         timestamp: new Date().toISOString(),
       };
 
@@ -149,15 +153,30 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="paymentAccount">Rekening/Ewallet dan atas nama (xxx-a/n)</Label>
+            <Label htmlFor="paymentAccount">
+              {isEwallet ? 'Nomor Ewallet' : 'Nomor Rekening'}
+            </Label>
             <Input 
               id="paymentAccount"
-              placeholder="e.g. 1234567890 a/n John Doe"
+              placeholder={isEwallet ? "e.g. 081234567890" : "e.g. 1234567890"}
               required
               value={paymentAccount}
               onChange={(e) => setPaymentAccount(e.target.value)}
             />
           </div>
+
+          {!isEwallet && paymentMethod && paymentMethod !== 'Other' && (
+            <div className="space-y-2">
+              <Label htmlFor="accountName">Atas Nama Rekening</Label>
+              <Input 
+                id="accountName"
+                placeholder="e.g. John Doe"
+                required
+                value={accountName}
+                onChange={(e) => setAccountName(e.target.value)}
+              />
+            </div>
+          )}
           
           <Button 
             type="submit" 
