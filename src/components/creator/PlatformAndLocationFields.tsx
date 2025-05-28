@@ -2,7 +2,8 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import SocialPlatforms from './SocialPlatforms';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { validateNumberInput } from '@/utils/validation';
 
 interface PlatformAndLocationFieldsProps {
   formData: {
@@ -10,19 +11,73 @@ interface PlatformAndLocationFieldsProps {
     followers: string;
     city: string;
     occupation: string;
+    channelLink: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPlatformToggle: (platform: string) => void;
 }
 
 const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({ formData, onChange, onPlatformToggle }) => {
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    if (name === 'followers') {
+      if (value === '' || validateNumberInput(value)) {
+        onChange(e);
+      }
+    } else {
+      onChange(e);
+    }
+  };
+
+  const handlePlatformChange = (value: string) => {
+    onPlatformToggle(value);
+  };
+
+  const selectedPlatform = formData.activePlatforms[0] || '';
+
   return (
     <>
       <div className="space-y-2">
-        <Label className="text-white">Di Platform apa paling aktif (pilih minimal satu)</Label>
-        <SocialPlatforms 
-          activePlatforms={formData.activePlatforms} 
-          onPlatformToggle={onPlatformToggle} 
+        <Label className="text-white">Platform dengan Jumlah Followers Paling Banyak</Label>
+        <RadioGroup value={selectedPlatform} onValueChange={handlePlatformChange}>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="youtube" id="youtube" />
+            <Label htmlFor="youtube" className="text-white">Youtube</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="tiktok" id="tiktok" />
+            <Label htmlFor="tiktok" className="text-white">TikTok</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="instagram" id="instagram" />
+            <Label htmlFor="instagram" className="text-white">Instagram</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="facebook" id="facebook" />
+            <Label htmlFor="facebook" className="text-white">Facebook</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="twitter" id="twitter" />
+            <Label htmlFor="twitter" className="text-white">X (Twitter)</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="snapchat" id="snapchat" />
+            <Label htmlFor="snapchat" className="text-white">Snapchat</Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="channelLink" className="text-white">Link Platform Sosial Media dengan Jumlah Followers Paling Banyak</Label>
+        <Input 
+          id="channelLink"
+          name="channelLink"
+          placeholder="https://..."
+          required
+          className="rounded-lg"
+          value={formData.channelLink}
+          onChange={onChange}
         />
       </div>
 
@@ -35,7 +90,7 @@ const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({ f
           required
           className="rounded-lg"
           value={formData.followers}
-          onChange={onChange}
+          onChange={handleNumberChange}
         />
       </div>
 

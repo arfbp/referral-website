@@ -20,7 +20,7 @@ const CreatorForm = () => {
     channelName: '',
     whatsappNumber: '',
     category: 'anime',
-    userId: '',
+    uid: '',
     channelLink: '',
     activePlatforms: [] as string[],
     followers: '',
@@ -28,6 +28,7 @@ const CreatorForm = () => {
     occupation: '',
     paymentMethod: '',
     paymentAccount: '',
+    accountName: '',
     otherPayment: '',
     referralCode: referralCode || '', // Store the referral code in a dedicated field
   });
@@ -46,15 +47,7 @@ const CreatorForm = () => {
   };
 
   const handlePlatformToggle = (platform: string) => {
-    setFormData(prev => {
-      const platforms = [...prev.activePlatforms];
-      
-      if (platforms.includes(platform)) {
-        return { ...prev, activePlatforms: platforms.filter(p => p !== platform) };
-      } else {
-        return { ...prev, activePlatforms: [...platforms, platform] };
-      }
-    });
+    setFormData(prev => ({ ...prev, activePlatforms: [platform] }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,7 +57,7 @@ const CreatorForm = () => {
     if (formData.activePlatforms.length === 0) {
       toast({
         title: "Platform selection required",
-        description: "Please select at least one active platform.",
+        description: "Please select your main platform.",
         variant: "destructive"
       });
       return;
@@ -87,20 +80,18 @@ const CreatorForm = () => {
         ...formData,
         activePlatforms: formData.activePlatforms.join(", "),
         timestamp: new Date().toISOString(),
-        // Make sure referralCode is sent as a separate field
       };
       
       // Send data to Google Sheets using the hardcoded URL
       const response = await fetch(GOOGLE_SHEETS_URL, {
         method: "POST",
-        mode: "no-cors", // This is needed for Google Sheets Web App
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formattedData),
       });
       
-      // Since no-cors doesn't return status, we'll just assume it worked
       toast({
         title: "Form submitted successfully!",
         description: "Your application has been submitted to our database.",
@@ -113,7 +104,7 @@ const CreatorForm = () => {
         channelName: '',
         whatsappNumber: '',
         category: 'anime',
-        userId: '',
+        uid: '',
         channelLink: '',
         activePlatforms: [],
         followers: '',
@@ -121,8 +112,9 @@ const CreatorForm = () => {
         occupation: '',
         paymentMethod: '',
         paymentAccount: '',
+        accountName: '',
         otherPayment: '',
-        referralCode: referralCode || '', // Maintain the referral code
+        referralCode: referralCode || '',
       });
       
     } catch (error) {
