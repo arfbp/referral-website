@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
@@ -30,12 +31,16 @@ const CreatorForm = () => {
     paymentAccount: '',
     accountName: '',
     otherPayment: '',
-    referralCode: referralCode || '', // Store the referral code in a dedicated field
+    referralCode: referralCode || '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFieldChange = (field: string, value: string | string[]) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleCategoryChange = (value: string) => {
@@ -148,7 +153,7 @@ const CreatorForm = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <BasicInfoFields 
             formData={formData} 
-            onChange={handleInputChange}
+            onChange={handleFieldChange}
             onCategoryChange={handleCategoryChange}
           />
           
