@@ -2,80 +2,83 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import CategorySelector from './CategorySelector';
+import { validateNumberInput } from '@/utils/validation';
 
 interface BasicInfoFieldsProps {
   formData: {
-    channelName: string;
+    name: string;
     whatsappNumber: string;
-    category: string;
-    userId: string;
-    channelLink: string;
+    uid: string;
+    followers: string;
   };
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onCategoryChange: (value: string) => void;
 }
 
-const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ formData, onChange, onCategoryChange }) => {
+const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ formData, onChange }) => {
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    // Allow empty value or only numbers for specific fields
+    if (['whatsappNumber', 'uid', 'followers'].includes(name)) {
+      if (value === '' || validateNumberInput(value)) {
+        onChange(e);
+      }
+    } else {
+      onChange(e);
+    }
+  };
+
   return (
     <>
       <div className="space-y-2">
-        <Label htmlFor="channelName" className="text-white">Nama Channel (Bstation)</Label>
+        <Label htmlFor="name" className="text-white">Nama Lengkap</Label>
         <Input 
-          id="channelName"
-          name="channelName"
-          placeholder="Your channel name"
+          id="name"
+          name="name"
+          placeholder="Masukkan nama lengkap Anda"
           required
           className="rounded-lg"
-          value={formData.channelName}
+          value={formData.name}
           onChange={onChange}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="whatsappNumber" className="text-white">Nomor Whatsapp</Label>
+        <Label htmlFor="whatsappNumber" className="text-white">Nomor WhatsApp</Label>
         <Input 
           id="whatsappNumber"
           name="whatsappNumber"
-          placeholder="628xxxxxxxxxx"
+          placeholder="Contoh: 628123456789"
           required
           className="rounded-lg"
           value={formData.whatsappNumber}
-          onChange={onChange}
+          onChange={handleNumberChange}
         />
       </div>
 
       <div className="space-y-2">
-        <Label className="text-white">Kategori</Label>
-        <CategorySelector 
-          selectedCategory={formData.category} 
-          onChange={onCategoryChange} 
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="userId" className="text-white">UID (User ID, bisa cek di profile)</Label>
+        <Label htmlFor="uid" className="text-white">UID</Label>
         <Input 
-          id="userId"
-          name="userId"
-          placeholder="Your User ID"
+          id="uid"
+          name="uid"
+          placeholder="Masukkan UID Anda"
           required
           className="rounded-lg"
-          value={formData.userId}
-          onChange={onChange}
+          value={formData.uid}
+          onChange={handleNumberChange}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="channelLink" className="text-white">Link Channel kamu (YT / Tiktok / Platform Lain)</Label>
+        <Label htmlFor="followers" className="text-white">Jumlah Followers</Label>
         <Input 
-          id="channelLink"
-          name="channelLink"
-          placeholder="https://"
+          id="followers"
+          name="followers"
+          placeholder="Contoh: 1000"
           required
           className="rounded-lg"
-          value={formData.channelLink}
-          onChange={onChange}
+          value={formData.followers}
+          onChange={handleNumberChange}
         />
       </div>
     </>

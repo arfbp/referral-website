@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { LogOut, User } from 'lucide-react';
 import CopyButton from '@/components/CopyButton';
 import Logo from '@/components/Logo';
+import ProfileCompletionForm from '@/components/ProfileCompletionForm';
 
 interface UserData {
   id: string;
@@ -179,6 +181,14 @@ const Profile = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+        
+        {/* Profile Completion Form */}
+        <div className="mt-8">
+          <ProfileCompletionForm 
+            userEmail={userData.email} 
+            referralCode={userData.referralCode} 
+          />
         </div>
       </main>
     </div>
