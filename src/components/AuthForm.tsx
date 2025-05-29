@@ -76,13 +76,25 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
         
         navigate('/profile');
       } else {
-        // First check if user already exists
-        const { data: existingUser } = await supabase.auth.signInWithPassword({
+        // Check if user already exists by attempting to sign in first
+        const { data: existingSignIn, error: signInError } = await supabase.auth.signInWithPassword({
           email,
-          password: 'dummy', // This will fail but tells us if user exists
+          password: 'dummy_password_check',
         });
 
-        const { error } = await supabase.auth.signUp({
+        // If sign in doesn't fail with "Invalid login credentials", user exists
+        if (signInError && !signInError.message.includes('Invalid login credentials')) {
+          if (signInError.message.includes('Email not confirmed') || signInError.message.includes('already registered')) {
+            toast({
+              title: "Account already exists",
+              description: "An account with this email already exists. Please try logging in instead.",
+              variant: "destructive"
+            });
+            return;
+          }
+        }
+
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -94,7 +106,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
         });
         
         if (error) {
-          if (error.message.includes('already registered')) {
+          if (error.message.includes('already registered') || error.message.includes('User already registered')) {
             toast({
               title: "Account already exists",
               description: "An account with this email already exists. Please try logging in instead.",
@@ -109,13 +121,20 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
           });
           return;
         }
-        
-        toast({
-          title: "Account created successfully!",
-          description: "Please check your email to verify your account before signing in.",
-        });
-        
-        // Don't automatically navigate, let user verify email first
+
+        // Check if user was created and session is available (no email confirmation required)
+        if (data.user && data.session) {
+          toast({
+            title: "Account created successfully!",
+            description: "Welcome! You've been automatically signed in.",
+          });
+          navigate('/profile');
+        } else if (data.user && !data.session) {
+          toast({
+            title: "Account created successfully!",
+            description: "Please check your email to verify your account before signing in.",
+          });
+        }
       }
     } catch (error) {
       console.error("Authentication error:", error);

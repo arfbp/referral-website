@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,6 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
   const { toast } = useToast();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [isProfileComplete, setIsProfileComplete] = useState(false);
   
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
@@ -30,12 +30,11 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
 
   const isEwallet = ['Gopay', 'Ovo', 'DANA', 'ShopeePay'].includes(paymentMethod);
 
-  // Check if profile is complete
+  // Load saved profile data on component mount
   useEffect(() => {
     const profileData = localStorage.getItem(`profile_${userEmail}`);
     if (profileData) {
       const parsed = JSON.parse(profileData);
-      setIsProfileComplete(true);
       setWhatsappNumber(parsed.whatsappNumber || '');
       setPaymentMethod(parsed.paymentMethod || '');
       setPaymentAccount(parsed.paymentAccount || '');
@@ -108,9 +107,8 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
         body: JSON.stringify(profileData),
       });
       
-      // Save to localStorage to remember profile completion
+      // Save to localStorage to remember profile data
       localStorage.setItem(`profile_${userEmail}`, JSON.stringify(profileData));
-      setIsProfileComplete(true);
       
       toast({
         title: "Profile updated",
@@ -131,125 +129,123 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
 
   return (
     <div className="space-y-6">
-      {!isProfileComplete && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Complete Your Profile</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="whatsapp">WhatsApp Number</Label>
-                <Input 
-                  id="whatsapp"
-                  type="tel" 
-                  placeholder="Your WhatsApp number"
-                  required
-                  value={whatsappNumber}
-                  onChange={handleWhatsAppChange}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>Rekening/Ewallet</Label>
-                <RadioGroup 
-                  value={paymentMethod}
-                  onValueChange={setPaymentMethod}
-                  className="grid grid-cols-3 gap-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Gopay" id="gopay" />
-                    <Label htmlFor="gopay">Gopay</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Ovo" id="ovo" />
-                    <Label htmlFor="ovo">Ovo</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="DANA" id="dana" />
-                    <Label htmlFor="dana">DANA</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="ShopeePay" id="shopeepay" />
-                    <Label htmlFor="shopeepay">ShopeePay</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="BRI" id="bri" />
-                    <Label htmlFor="bri">BRI</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="BCA" id="bca" />
-                    <Label htmlFor="bca">BCA</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="BNI" id="bni" />
-                    <Label htmlFor="bni">BNI</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Mandiri" id="mandiri" />
-                    <Label htmlFor="mandiri">Mandiri</Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="Other" id="other_payment" />
-                    <Label htmlFor="other_payment">Other</Label>
-                  </div>
-                </RadioGroup>
-
-                {paymentMethod === "Other" && (
-                  <Input 
-                    placeholder="Specify payment method"
-                    value={otherPayment}
-                    onChange={(e) => setOtherPayment(e.target.value)}
-                    required
-                  />
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="paymentAccount">
-                  Nomor Rekening / Ewallet
-                </Label>
-                <Input 
-                  id="paymentAccount"
-                  placeholder={isEwallet ? "e.g. 081234567890" : "e.g. 1234567890"}
-                  required
-                  value={paymentAccount}
-                  onChange={handlePaymentAccountChange}
-                />
-              </div>
-
-              {!isEwallet && paymentMethod && paymentMethod !== 'Other' && (
-                <div className="space-y-2">
-                  <Label htmlFor="accountName">Atas Nama Rekening</Label>
-                  <Input 
-                    id="accountName"
-                    placeholder="e.g. John Doe"
-                    required
-                    value={accountName}
-                    onChange={(e) => setAccountName(e.target.value)}
-                  />
-                </div>
-              )}
-              
-              <Button 
-                type="submit" 
-                className="w-full"
-                disabled={isLoading}
+      <Card>
+        <CardHeader>
+          <CardTitle>Complete Your Profile</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="whatsapp">WhatsApp Number</Label>
+              <Input 
+                id="whatsapp"
+                type="tel" 
+                placeholder="Your WhatsApp number"
+                required
+                value={whatsappNumber}
+                onChange={handleWhatsAppChange}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Rekening/Ewallet</Label>
+              <RadioGroup 
+                value={paymentMethod}
+                onValueChange={setPaymentMethod}
+                className="grid grid-cols-3 gap-2"
               >
-                {isLoading ? "Updating..." : "Update Profile"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      )}
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Gopay" id="gopay" />
+                  <Label htmlFor="gopay">Gopay</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Ovo" id="ovo" />
+                  <Label htmlFor="ovo">Ovo</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="DANA" id="dana" />
+                  <Label htmlFor="dana">DANA</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="ShopeePay" id="shopeepay" />
+                  <Label htmlFor="shopeepay">ShopeePay</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="BRI" id="bri" />
+                  <Label htmlFor="bri">BRI</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="BCA" id="bca" />
+                  <Label htmlFor="bca">BCA</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="BNI" id="bni" />
+                  <Label htmlFor="bni">BNI</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Mandiri" id="mandiri" />
+                  <Label htmlFor="mandiri">Mandiri</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Other" id="other_payment" />
+                  <Label htmlFor="other_payment">Other</Label>
+                </div>
+              </RadioGroup>
+
+              {paymentMethod === "Other" && (
+                <Input 
+                  placeholder="Specify payment method"
+                  value={otherPayment}
+                  onChange={(e) => setOtherPayment(e.target.value)}
+                  required
+                />
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="paymentAccount">
+                Nomor Rekening / Ewallet
+              </Label>
+              <Input 
+                id="paymentAccount"
+                placeholder={isEwallet ? "e.g. 081234567890" : "e.g. 1234567890"}
+                required
+                value={paymentAccount}
+                onChange={handlePaymentAccountChange}
+              />
+            </div>
+
+            {!isEwallet && paymentMethod && paymentMethod !== 'Other' && (
+              <div className="space-y-2">
+                <Label htmlFor="accountName">Atas Nama Rekening</Label>
+                <Input 
+                  id="accountName"
+                  placeholder="e.g. John Doe"
+                  required
+                  value={accountName}
+                  onChange={(e) => setAccountName(e.target.value)}
+                />
+              </div>
+            )}
+            
+            <Button 
+              type="submit" 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "Updating..." : "Update Profile"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -264,12 +260,36 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({ userEmail
 
             <div className="space-y-2">
               <Label htmlFor="referralLink">Referral Link:</Label>
-              <Input 
-                id="referralLink"
-                value={referralLink}
-                readOnly
-                className="bg-gray-50"
-              />
+              <div className="flex gap-2">
+                <Input 
+                  id="referralLink"
+                  value={referralLink}
+                  readOnly
+                  className="bg-gray-50"
+                />
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  onClick={handleCopyLink}
+                  className="whitespace-nowrap"
+                >
+                  Copy
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="referralLinkClickable">Click to open Referral Link:</Label>
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <a 
+                  href={referralLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  {referralLink}
+                </a>
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
