@@ -1,10 +1,8 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { validateNumberInput } from '@/utils/validation';
-
 interface PlatformAndLocationFieldsProps {
   formData: {
     activePlatforms: string[];
@@ -16,11 +14,16 @@ interface PlatformAndLocationFieldsProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onPlatformToggle: (platform: string) => void;
 }
-
-const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({ formData, onChange, onPlatformToggle }) => {
+const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({
+  formData,
+  onChange,
+  onPlatformToggle
+}) => {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    
+    const {
+      name,
+      value
+    } = e.target;
     if (name === 'followers') {
       if (value === '' || validateNumberInput(value)) {
         onChange(e);
@@ -29,15 +32,11 @@ const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({ f
       onChange(e);
     }
   };
-
   const handlePlatformChange = (value: string) => {
     onPlatformToggle(value);
   };
-
   const selectedPlatform = formData.activePlatforms[0] || '';
-
-  return (
-    <>
+  return <>
       <div className="space-y-2">
         <Label className="text-white">Platform Sosial Media kamu dengan Followers paling banyak</Label>
         <RadioGroup value={selectedPlatform} onValueChange={handlePlatformChange}>
@@ -69,58 +68,24 @@ const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({ f
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="channelLink" className="text-white">Link Platform Sosial Media kamu</Label>
-        <Input 
-          id="channelLink"
-          name="channelLink"
-          placeholder="https://..."
-          required
-          className="rounded-lg"
-          value={formData.channelLink}
-          onChange={onChange}
-        />
+        <Label htmlFor="channelLink" className="text-white">Link Platform Sosial Media kamu (Pastikan bahwa ini adalah Channel / Sosial media kamu ya)</Label>
+        <Input id="channelLink" name="channelLink" placeholder="https://..." required className="rounded-lg" value={formData.channelLink} onChange={onChange} />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="followers" className="text-white">Jumlah Follower / Subscriber</Label>
-        <Input 
-          id="followers"
-          name="followers"
-          placeholder="e.g. 5000"
-          required
-          className="rounded-lg"
-          value={formData.followers}
-          onChange={handleNumberChange}
-        />
+        <Input id="followers" name="followers" placeholder="e.g. 5000" required className="rounded-lg" value={formData.followers} onChange={handleNumberChange} />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="city" className="text-white">Dikota mana kamu tinggal</Label>
-        <Input 
-          id="city"
-          name="city"
-          placeholder="Nama kota"
-          required
-          className="rounded-lg"
-          value={formData.city}
-          onChange={onChange}
-        />
+        <Input id="city" name="city" placeholder="Nama kota" required className="rounded-lg" value={formData.city} onChange={onChange} />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="occupation" className="text-white">Pekerjaan sehari-hari</Label>
-        <Input 
-          id="occupation"
-          name="occupation"
-          placeholder="Pekerjaan kamu"
-          required
-          className="rounded-lg"
-          value={formData.occupation}
-          onChange={onChange}
-        />
+        <Input id="occupation" name="occupation" placeholder="Pekerjaan kamu" required className="rounded-lg" value={formData.occupation} onChange={onChange} />
       </div>
-    </>
-  );
+    </>;
 };
-
 export default PlatformAndLocationFields;
