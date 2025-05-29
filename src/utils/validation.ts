@@ -11,3 +11,8 @@ export const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>): void 
     e.preventDefault();
   }
 };
+
+export const formatNumberInput = (value: string): string => {
+  // Remove all non-digit characters
+  return value.replace(/\D/g, '');
+};

@@ -76,17 +76,32 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
         
         navigate('/profile');
       } else {
+        // First check if user already exists
+        const { data: existingUser } = await supabase.auth.signInWithPassword({
+          email,
+          password: 'dummy', // This will fail but tells us if user exists
+        });
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             data: {
               name: name,
-            }
+            },
+            emailRedirectTo: `${window.location.origin}/profile`
           }
         });
         
         if (error) {
+          if (error.message.includes('already registered')) {
+            toast({
+              title: "Account already exists",
+              description: "An account with this email already exists. Please try logging in instead.",
+              variant: "destructive"
+            });
+            return;
+          }
           toast({
             title: "Registration failed",
             description: error.message,
@@ -96,11 +111,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
         }
         
         toast({
-          title: "Account created",
-          description: "Please check your email to verify your account.",
+          title: "Account created successfully!",
+          description: "Please check your email to verify your account before signing in.",
         });
         
-        navigate('/profile');
+        // Don't automatically navigate, let user verify email first
       }
     } catch (error) {
       console.error("Authentication error:", error);

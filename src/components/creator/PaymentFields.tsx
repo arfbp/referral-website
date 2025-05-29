@@ -3,6 +3,7 @@ import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import PaymentMethodSelector from './PaymentMethodSelector';
+import { formatNumberInput } from '@/utils/validation';
 
 interface PaymentFieldsProps {
   formData: {
@@ -18,6 +19,19 @@ interface PaymentFieldsProps {
 const PaymentFields: React.FC<PaymentFieldsProps> = ({ formData, onChange, onMethodChange }) => {
   const isEwallet = ['Gopay', 'Ovo', 'DANA', 'ShopeePay'].includes(formData.paymentMethod);
   
+  const handlePaymentAccountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatNumberInput(e.target.value);
+    const syntheticEvent = {
+      ...e,
+      target: {
+        ...e.target,
+        name: 'paymentAccount',
+        value: formattedValue
+      }
+    };
+    onChange(syntheticEvent);
+  };
+
   return (
     <>
       <div className="space-y-2">
@@ -41,7 +55,7 @@ const PaymentFields: React.FC<PaymentFieldsProps> = ({ formData, onChange, onMet
           required
           className="rounded-lg"
           value={formData.paymentAccount}
-          onChange={onChange}
+          onChange={handlePaymentAccountChange}
         />
       </div>
 
