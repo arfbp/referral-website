@@ -39,7 +39,7 @@ const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({ f
   return (
     <>
       <div className="space-y-2">
-        <Label className="text-white">Platform dengan Jumlah Followers Paling Banyak</Label>
+        <Label className="text-white">Platform Sosial Media kamu dengan Followers paling banyak</Label>
         <RadioGroup value={selectedPlatform} onValueChange={handlePlatformChange}>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="youtube" id="youtube" />
@@ -69,7 +69,7 @@ const PlatformAndLocationFields: React.FC<PlatformAndLocationFieldsProps> = ({ f
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="channelLink" className="text-white">Link Platform Sosial Media dengan Jumlah Followers Paling Banyak</Label>
+        <Label htmlFor="channelLink" className="text-white">Link Platform Sosial Media kamu</Label>
         <Input 
           id="channelLink"
           name="channelLink"

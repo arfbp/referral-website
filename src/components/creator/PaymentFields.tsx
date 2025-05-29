@@ -32,7 +32,7 @@ const PaymentFields: React.FC<PaymentFieldsProps> = ({ formData, onChange, onMet
 
       <div className="space-y-2">
         <Label htmlFor="paymentAccount" className="text-white">
-          {isEwallet ? 'Nomor Ewallet' : 'Nomor Rekening'}
+          Nomor Rekening / Ewallet
         </Label>
         <Input 
           id="paymentAccount"

@@ -2,6 +2,7 @@
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import CategorySelector from './CategorySelector';
 
 interface BasicInfoFieldsProps {
   formData: {
@@ -47,6 +48,26 @@ const BasicInfoFields: React.FC<BasicInfoFieldsProps> = ({ formData, onChange, o
           placeholder="08xxxxxxxxxx"
           value={formData.whatsappNumber}
           onChange={(e) => onChange('whatsappNumber', e.target.value)}
+          required
+          className="rounded-lg"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-white">Kategori</Label>
+        <CategorySelector
+          selectedCategory={formData.category}
+          onChange={onCategoryChange}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="uid" className="text-white">UID</Label>
+        <Input
+          id="uid"
+          placeholder="UID Anda"
+          value={formData.uid}
+          onChange={(e) => onChange('uid', e.target.value)}
           required
           className="rounded-lg"
         />

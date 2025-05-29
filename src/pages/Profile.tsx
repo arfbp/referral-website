@@ -12,6 +12,7 @@ const Profile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-purple-blue flex items-center justify-center">
+        <NavigationMenu />
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-white"></div>
       </div>
     );
@@ -19,9 +20,9 @@ const Profile = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-purple-blue flex flex-col py-10 px-4 md:px-8">
+      <div className="min-h-screen bg-gradient-purple-blue flex flex-col overflow-y-auto">
         <NavigationMenu />
-        <div className="flex flex-col items-center justify-center flex-1">
+        <div className="flex flex-col items-center justify-center flex-1 pt-20 px-4 md:px-8">
           <Card className="w-full max-w-md">
             <CardHeader>
               <CardTitle className="text-center">Please Sign In</CardTitle>
@@ -42,9 +43,9 @@ const Profile = () => {
   const referralCode = user.id?.slice(-8).toUpperCase() || 'DEFAULT';
 
   return (
-    <div className="min-h-screen bg-gradient-purple-blue flex flex-col py-10 px-4 md:px-8 overflow-y-auto">
+    <div className="min-h-screen bg-gradient-purple-blue flex flex-col overflow-y-auto">
       <NavigationMenu />
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center pt-20 py-10 px-4 md:px-8">
         <div className="w-full max-w-2xl">
           <div className="mb-4 flex justify-between items-center">
             <h1 className="text-2xl font-bold text-white">Welcome, {user.user_metadata?.name || user.email}</h1>
