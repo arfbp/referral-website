@@ -26,9 +26,8 @@ const ThankYou = () => {
                   </p>
                 </div>
                 
-                <p className="pt-4">
-                  Kami akan review konten kamu jika berkualitas (Max 5 hari kerja) kamu akan diundang ke grup potensi Bstation
-                </p>
+                <p className="pt-4">Kami akan review konten kamu jika berkualitas (Max 5 hari kerja)
+Kamu akan diundang ke grup potensi Bstation</p>
               </div>
             </CardContent>
           </Card>
