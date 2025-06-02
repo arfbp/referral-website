@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
 import { useReferralCode } from '@/hooks/useReferralCode';
@@ -14,6 +15,7 @@ const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbwDv-_C2CMCwD
 
 const CreatorForm = () => {
   const referralCode = useReferralCode();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   
@@ -104,23 +106,8 @@ const CreatorForm = () => {
       
       console.log("Form Data:", formData);
 
-      // Reset form after submission
-      setFormData({
-        channelName: '',
-        whatsappNumber: '',
-        category: 'anime',
-        uid: '',
-        channelLink: '',
-        activePlatforms: [],
-        followers: '',
-        city: '',
-        occupation: '',
-        paymentMethod: '',
-        paymentAccount: '',
-        accountName: '',
-        otherPayment: '',
-        referralCode: referralCode || '',
-      });
+      // Redirect to thank you page after successful submission
+      navigate('/thank-you');
       
     } catch (error) {
       console.error("Submission error:", error);

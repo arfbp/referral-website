@@ -14,6 +14,7 @@ const SignUp = lazy(() => import("./pages/SignUp"));
 const Login = lazy(() => import("./pages/Login"));
 const Profile = lazy(() => import("./pages/Profile"));
 const FormPage = lazy(() => import("./pages/FormPage"));
+const ThankYou = lazy(() => import("./pages/ThankYou"));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/form" element={<FormPage />} />
+            <Route path="/thank-you" element={<ThankYou />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

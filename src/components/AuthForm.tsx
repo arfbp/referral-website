@@ -122,19 +122,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
           return;
         }
 
-        // Check if user was created and session is available (no email confirmation required)
-        if (data.user && data.session) {
-          toast({
-            title: "Account created successfully!",
-            description: "Welcome! You've been automatically signed in.",
-          });
-          navigate('/profile');
-        } else if (data.user && !data.session) {
-          toast({
-            title: "Account created successfully!",
-            description: "Please check your email to verify your account before signing in.",
-          });
-        }
+        // Always redirect to profile after successful signup
+        toast({
+          title: "Account created successfully!",
+          description: "Welcome! Redirecting to your profile.",
+        });
+        navigate('/profile');
       }
     } catch (error) {
       console.error("Authentication error:", error);
