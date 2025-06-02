@@ -1,22 +1,17 @@
-
 import React from 'react';
 import NavigationMenu from '@/components/NavigationMenu';
 import { Card, CardContent } from '@/components/ui/card';
-
 const ThankYou = () => {
-  return (
-    <div className="min-h-screen bg-gradient-purple-blue flex flex-col overflow-y-auto">
+  return <div className="min-h-screen bg-gradient-purple-blue flex flex-col overflow-y-auto">
       <NavigationMenu />
       <div className="flex flex-col items-center pt-20 py-10 px-4 md:px-8">
         <div className="w-full max-w-2xl">
           <Card className="glass-morphism w-full">
             <CardContent className="pt-6">
-              <h2 className="text-2xl font-semibold mb-6 text-center text-white">TERIMAKASIH</h2>
+              <h2 className="font-semibold mb-6 text-center text-white text-3xl">TERIMAKASIH ATAS KETERSEDIAAN KAMU MENGISI FORM REGISTRASI</h2>
               
               <div className="text-white space-y-4">
-                <p className="text-center">
-                  atas kesedian kamu mengisi form registrasi.
-                </p>
+                
                 
                 <p>
                   Setelah ini harap siapkan segera konten TERBAIK kamu dengan syarat :
@@ -39,8 +34,6 @@ const ThankYou = () => {
           </Card>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ThankYou;
