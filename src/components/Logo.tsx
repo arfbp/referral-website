@@ -6,9 +6,9 @@ const Logo = () => {
   return (
     <Link to="/" className="flex items-center gap-2">
       <div className="w-8 h-8 bg-gradient-hero rounded-md flex items-center justify-center">
-        <span className="font-bold text-white text-xs">BS</span>
+        <span className="font-bold text-white text-xs">RSB</span>
       </div>
-      <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-hero">Ambassador(CGC/FGC) Form</span>
+      <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-hero">RSB Creator Manager</span>
     </Link>
   );
 };

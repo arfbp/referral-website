@@ -1,12 +1,11 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
-import { Turnstile } from '@marsidev/react-turnstile';
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -16,35 +15,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState<string>('');
-  const turnstileRef = useRef<any>(null);
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  // Use your actual site key
-  const TURNSTILE_SITE_KEY = '0x4AAAAAABe-s1YQOylP3vqy';
-
-  const handleCaptchaSuccess = (token: string) => {
-    setCaptchaToken(token);
-  };
-
-  const handleCaptchaError = () => {
-    setCaptchaToken('');
-    toast({
-      title: "Captcha failed",
-      description: "Please try the captcha again.",
-      variant: "destructive"
-    });
-  };
-
-  const resetCaptcha = () => {
-    if (turnstileRef.current) {
-      turnstileRef.current.reset();
-    }
-    setCaptchaToken('');
-  };
 
   const handleGoogleSignIn = async () => {
     try {
@@ -62,7 +36,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
           description: error.message,
           variant: "destructive"
         });
-        resetCaptcha();
       }
     } catch (error) {
       console.error("Google sign-in error:", error);
@@ -71,7 +44,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
         description: "There was a problem signing in with Google.",
         variant: "destructive"
       });
-      resetCaptcha();
     } finally {
       setIsLoading(false);
     }
@@ -80,25 +52,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!captchaToken) {
-      toast({
-        title: "Captcha required",
-        description: "Please complete the captcha verification.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setIsLoading(true);
 
     try {
       if (isLogin) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
-          password,
-          options: {
-            captchaToken
-          }
+          password
         });
         
         if (error) {
@@ -107,7 +67,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
             description: error.message,
             variant: "destructive"
           });
-          resetCaptcha();
           return;
         }
         
@@ -132,7 +91,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
               description: "An account with this email already exists. Please try logging in instead.",
               variant: "destructive"
             });
-            resetCaptcha();
             return;
           }
         }
@@ -144,8 +102,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
             data: {
               name: name,
             },
-            emailRedirectTo: `${window.location.origin}/profile`,
-            captchaToken
+            emailRedirectTo: `${window.location.origin}/profile`
           }
         });
         
@@ -156,7 +113,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
               description: "An account with this email already exists. Please try logging in instead.",
               variant: "destructive"
             });
-            resetCaptcha();
             return;
           }
           toast({
@@ -164,7 +120,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
             description: error.message,
             variant: "destructive"
           });
-          resetCaptcha();
           return;
         }
 
@@ -182,7 +137,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
         description: "There was a problem with your request. Please try again.",
         variant: "destructive"
       });
-      resetCaptcha();
     } finally {
       setIsLoading(false);
     }
@@ -195,7 +149,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
         variant="outline" 
         className="w-full"
         onClick={handleGoogleSignIn}
-        disabled={isLoading || !captchaToken}
+        disabled={isLoading}
       >
         Continue with Google
       </Button>
@@ -250,29 +204,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-
-        {/* Turnstile Captcha */}
-        <div className="space-y-2">
-          <Label>Security Verification</Label>
-          <div className="flex justify-center">
-            <Turnstile
-              ref={turnstileRef}
-              siteKey={TURNSTILE_SITE_KEY}
-              onSuccess={handleCaptchaSuccess}
-              onError={handleCaptchaError}
-              onExpire={() => setCaptchaToken('')}
-              options={{
-                theme: 'light',
-                size: 'normal',
-              }}
-            />
-          </div>
-        </div>
         
         <Button 
           type="submit" 
           className="w-full bg-gradient-hero hover:opacity-90"
-          disabled={isLoading || !captchaToken}
+          disabled={isLoading}
         >
           {isLoading ? (isLogin ? "Signing in..." : "Creating account...") : (isLogin ? "Sign In" : "Create Account")}
         </Button>
