@@ -23,8 +23,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Get the Turnstile site key from environment or use a placeholder
-  const TURNSTILE_SITE_KEY = '0x4AAAAAAAkC8DyKaZRhKRbK'; // Replace with your actual site key
+  // Use your actual site key
+  const TURNSTILE_SITE_KEY = '0x4AAAAAABe-s1YQOylP3vqy';
 
   const handleCaptchaSuccess = (token: string) => {
     setCaptchaToken(token);
@@ -52,8 +52,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin }) => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/profile`,
-          captchaToken: captchaToken || undefined
+          redirectTo: `${window.location.origin}/profile`
         }
       });
       
