@@ -8,7 +8,7 @@ const ThankYou = () => {
         <div className="w-full max-w-2xl">
           <Card className="glass-morphism w-full">
             <CardContent className="pt-6">
-              <h2 className="font-semibold mb-6 text-center text-white text-3xl">TERIMAKASIH ATAS KETERSEDIAAN KAMU MENGISI FORM REGISTRASI</h2>
+              <h2 className="font-semibold mb-6 text-center text-white text-2xl">TERIMAKASIH ATAS KETERSEDIAAN KAMU MENGISI FORM REGISTRASI</h2>
               
               <div className="text-white space-y-4">
                 
