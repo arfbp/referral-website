@@ -108,7 +108,7 @@ const Index = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <Logo />
             <p className="text-sm text-gray-500 mt-4 md:mt-0">
-              © 2025 ReferralApp. All rights reserved.
+              © 2025 RSB Creator Manager. All rights reserved.
             </p>
           </div>
         </div>

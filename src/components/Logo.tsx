@@ -8,7 +8,7 @@ const Logo = () => {
       <div className="w-8 h-8 bg-gradient-hero rounded-md flex items-center justify-center">
         <span className="font-bold text-white text-xs">BS</span>
       </div>
-      <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-hero">ReferralForm</span>
+      <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-hero">Ambassador(CGC/FGC) Form</span>
     </Link>
   );
 };

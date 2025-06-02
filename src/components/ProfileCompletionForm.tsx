@@ -10,26 +10,34 @@ import { formatNumberInput } from '@/utils/validation';
 
 // Google Sheets Web App URL
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyCOvqcTULiqLUe5Cs-ZhHFchuWRrVDsw_SJwbdzKYElNhYupWfBMz5LM7KkY70j2e2/exec";
+
 interface ProfileCompletionFormProps {
   userEmail: string;
   referralCode: string;
 }
+
 const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
   userEmail,
   referralCode
 }) => {
-  const {
-    toast
-  } = useToast();
-  const {
-    user
-  } = useAuth();
+  const { toast } = useToast();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('');
   const [paymentAccount, setPaymentAccount] = useState('');
   const [accountName, setAccountName] = useState('');
   const [otherPayment, setOtherPayment] = useState('');
+  
+  // Original values to track changes
+  const [originalValues, setOriginalValues] = useState({
+    whatsappNumber: '',
+    paymentMethod: '',
+    paymentAccount: '',
+    accountName: '',
+    otherPayment: ''
+  });
+
   const isEwallet = ['Gopay', 'Ovo', 'DANA', 'ShopeePay'].includes(paymentMethod);
 
   // Load saved profile data on component mount
@@ -37,18 +45,39 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
     const profileData = localStorage.getItem(`profile_${userEmail}`);
     if (profileData) {
       const parsed = JSON.parse(profileData);
-      setWhatsappNumber(parsed.whatsappNumber || '');
-      setPaymentMethod(parsed.paymentMethod || '');
-      setPaymentAccount(parsed.paymentAccount || '');
-      setAccountName(parsed.accountName || '');
-      setOtherPayment(parsed.otherPayment || '');
+      const values = {
+        whatsappNumber: parsed.whatsappNumber || '',
+        paymentMethod: parsed.paymentMethod || '',
+        paymentAccount: parsed.paymentAccount || '',
+        accountName: parsed.accountName || '',
+        otherPayment: parsed.otherPayment || ''
+      };
+      
+      setWhatsappNumber(values.whatsappNumber);
+      setPaymentMethod(values.paymentMethod);
+      setPaymentAccount(values.paymentAccount);
+      setAccountName(values.accountName);
+      setOtherPayment(values.otherPayment);
+      setOriginalValues(values);
     }
   }, [userEmail]);
+
+  // Check if any values have changed
+  const hasChanges = () => {
+    return (
+      whatsappNumber !== originalValues.whatsappNumber ||
+      paymentMethod !== originalValues.paymentMethod ||
+      paymentAccount !== originalValues.paymentAccount ||
+      accountName !== originalValues.accountName ||
+      otherPayment !== originalValues.otherPayment
+    );
+  };
 
   // Social sharing functionality
   const currentUrl = window.location.origin;
   const shareText = `Join me on this amazing platform! Use my referral code: ${referralCode}`;
   const referralLink = `${currentUrl}?ref=${referralCode}`;
+
   const handleShareWhatsApp = () => {
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText} ${referralLink}`)}`;
     window.open(whatsappUrl, '_blank');
@@ -79,7 +108,19 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
   };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // Check if there are any changes
+    if (!hasChanges()) {
+      toast({
+        title: "No changes detected",
+        description: "Please make changes to your profile before updating.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
+    
     try {
       const profileData = {
         email: userEmail,
@@ -103,6 +144,16 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
 
       // Save to localStorage to remember profile data
       localStorage.setItem(`profile_${userEmail}`, JSON.stringify(profileData));
+      
+      // Update original values to current values
+      setOriginalValues({
+        whatsappNumber,
+        paymentMethod,
+        paymentAccount,
+        accountName,
+        otherPayment
+      });
+
       toast({
         title: "Profile updated",
         description: "Your profile has been successfully updated."
@@ -194,7 +245,11 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
                 <Input id="accountName" placeholder="e.g. John Doe" required value={accountName} onChange={e => setAccountName(e.target.value)} />
               </div>}
             
-            <Button type="submit" className="w-full" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading || !hasChanges()}
+            >
               {isLoading ? "Updating..." : "Update Profile"}
             </Button>
           </form>
@@ -223,8 +278,17 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
             </div>
 
             <div className="space-y-2">
-              
-              
+              <Label htmlFor="referralLinkClickable">Visit Referral Link:</Label>
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <a 
+                  href={referralLink} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline break-all"
+                >
+                  {referralLink}
+                </a>
+              </div>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
