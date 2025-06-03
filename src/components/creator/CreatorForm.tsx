@@ -82,11 +82,17 @@ const CreatorForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Format timestamp as yyyy-mm-dd
+      const now = new Date();
+      const formattedTimestamp = now.getFullYear() + '-' + 
+        String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+        String(now.getDate()).padStart(2, '0');
+
       // Format data for Google Sheets
       const formattedData = {
         ...formData,
         activePlatforms: formData.activePlatforms.join(", "),
-        timestamp: new Date().toISOString(),
+        timestamp: formattedTimestamp,
       };
       
       // Send data to Google Sheets using the hardcoded URL

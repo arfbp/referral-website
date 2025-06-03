@@ -27,7 +27,9 @@ const Index = () => {
       localStorage.setItem('referredBy', referralCode);
       console.log(`User referred by code: ${referralCode}`);
       
-      // In a real app, you'd track this referral in your backend
+      // Redirect to form page with referral code
+      navigate(`/form?ref=${referralCode}`);
+      return;
     }
   }, [navigate, location]);
   
@@ -61,7 +63,7 @@ const Index = () => {
               The more you share, the more you earn!
             </p>
             <Button size="lg" className="bg-gradient-hero hover:opacity-90" asChild>
-              <Link to="/signup" className="flex items-center gap-2">
+              <Link to="/form" className="flex items-center gap-2">
                 Get Started <ArrowRight className="w-4 h-4" />
               </Link>
             </Button>
