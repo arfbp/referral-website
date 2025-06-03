@@ -7,8 +7,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { formatNumberInput } from '@/utils/validation';
+import { supabase } from '@/integrations/supabase/client';
 
-// Google Sheets Web App URL
+// Google Sheets Web App URL (keeping as backup)
 const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyCOvqcTULiqLUe5Cs-ZhHFchuWRrVDsw_SJwbdzKYElNhYupWfBMz5LM7KkY70j2e2/exec";
 
 interface ProfileCompletionFormProps {
@@ -28,6 +29,7 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
   const [paymentAccount, setPaymentAccount] = useState('');
   const [accountName, setAccountName] = useState('');
   const [otherPayment, setOtherPayment] = useState('');
+  const [otherAccountName, setOtherAccountName] = useState('');
   
   // Original values to track changes
   const [originalValues, setOriginalValues] = useState({
@@ -35,32 +37,54 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
     paymentMethod: '',
     paymentAccount: '',
     accountName: '',
-    otherPayment: ''
+    otherPayment: '',
+    otherAccountName: ''
   });
 
   const isEwallet = ['Gopay', 'Ovo', 'DANA', 'ShopeePay'].includes(paymentMethod);
 
-  // Load saved profile data on component mount
+  // Load profile data from Supabase on component mount
   useEffect(() => {
-    const profileData = localStorage.getItem(`profile_${userEmail}`);
-    if (profileData) {
-      const parsed = JSON.parse(profileData);
-      const values = {
-        whatsappNumber: parsed.whatsappNumber || '',
-        paymentMethod: parsed.paymentMethod || '',
-        paymentAccount: parsed.paymentAccount || '',
-        accountName: parsed.accountName || '',
-        otherPayment: parsed.otherPayment || ''
-      };
-      
-      setWhatsappNumber(values.whatsappNumber);
-      setPaymentMethod(values.paymentMethod);
-      setPaymentAccount(values.paymentAccount);
-      setAccountName(values.accountName);
-      setOtherPayment(values.otherPayment);
-      setOriginalValues(values);
-    }
-  }, [userEmail]);
+    const loadProfileData = async () => {
+      if (!user?.id) return;
+
+      try {
+        const { data, error } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error('Error loading profile data:', error);
+          return;
+        }
+
+        if (data) {
+          const values = {
+            whatsappNumber: data.whatsapp_number || '',
+            paymentMethod: data.payment_method || '',
+            paymentAccount: data.payment_account || '',
+            accountName: data.account_name || '',
+            otherPayment: data.payment_method === 'Other' ? data.payment_method : '',
+            otherAccountName: data.payment_method === 'Other' ? data.account_name || '' : ''
+          };
+          
+          setWhatsappNumber(values.whatsappNumber);
+          setPaymentMethod(values.paymentMethod);
+          setPaymentAccount(values.paymentAccount);
+          setAccountName(values.accountName);
+          setOtherPayment(values.otherPayment);
+          setOtherAccountName(values.otherAccountName);
+          setOriginalValues(values);
+        }
+      } catch (error) {
+        console.error('Error loading profile data:', error);
+      }
+    };
+
+    loadProfileData();
+  }, [user?.id]);
 
   // Check if any values have changed
   const hasChanges = () => {
@@ -69,7 +93,8 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
       paymentMethod !== originalValues.paymentMethod ||
       paymentAccount !== originalValues.paymentAccount ||
       accountName !== originalValues.accountName ||
-      otherPayment !== originalValues.otherPayment
+      otherPayment !== originalValues.otherPayment ||
+      otherAccountName !== originalValues.otherAccountName
     );
   };
 
@@ -106,6 +131,7 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
     const formattedValue = formatNumberInput(e.target.value);
     setPaymentAccount(formattedValue);
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -119,31 +145,65 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
       return;
     }
 
+    if (!user?.id) {
+      toast({
+        title: "Authentication error",
+        description: "Please sign in to update your profile.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     try {
+      // Format timestamp as yyyy-mm-dd
+      const now = new Date();
+      const formattedTimestamp = now.getFullYear() + '-' + 
+        String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+        String(now.getDate()).padStart(2, '0');
+
+      const finalPaymentMethod = paymentMethod === 'Other' ? otherPayment : paymentMethod;
+      const finalAccountName = paymentMethod === 'Other' ? otherAccountName : (isEwallet ? '' : accountName);
+
       const profileData = {
+        user_id: user.id,
         email: userEmail,
-        referralCode: referralCode,
-        whatsappNumber: whatsappNumber,
-        paymentMethod: paymentMethod === 'Other' ? otherPayment : paymentMethod,
-        paymentAccount: paymentAccount,
-        accountName: isEwallet ? '' : accountName,
-        timestamp: new Date().toISOString()
+        referral_code: referralCode,
+        whatsapp_number: whatsappNumber,
+        payment_method: finalPaymentMethod,
+        payment_account: paymentAccount,
+        account_name: finalAccountName
       };
 
-      // Send data to Google Sheets
-      await fetch(GOOGLE_SHEETS_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(profileData)
-      });
+      // Save to Supabase database
+      const { error } = await supabase
+        .from('user_profiles')
+        .upsert(profileData, { 
+          onConflict: 'user_id',
+          ignoreDuplicates: false 
+        });
 
-      // Save to localStorage to remember profile data
-      localStorage.setItem(`profile_${userEmail}`, JSON.stringify(profileData));
+      if (error) {
+        throw error;
+      }
+
+      // Also send to Google Sheets as backup
+      try {
+        await fetch(GOOGLE_SHEETS_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            ...profileData,
+            timestamp: formattedTimestamp
+          })
+        });
+      } catch (sheetsError) {
+        console.warn("Google Sheets backup failed:", sheetsError);
+      }
       
       // Update original values to current values
       setOriginalValues({
@@ -151,12 +211,13 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
         paymentMethod,
         paymentAccount,
         accountName,
-        otherPayment
+        otherPayment,
+        otherAccountName
       });
 
       toast({
         title: "Profile updated",
-        description: "Your profile has been successfully updated."
+        description: "Your profile has been successfully saved to the database."
       });
     } catch (error) {
       console.error("Update error:", error);
@@ -169,7 +230,9 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
       setIsLoading(false);
     }
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Complete Your Profile</CardTitle>
@@ -178,7 +241,14 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="whatsapp">WhatsApp Number</Label>
-              <Input id="whatsapp" type="tel" placeholder="Your WhatsApp number" required value={whatsappNumber} onChange={handleWhatsAppChange} />
+              <Input 
+                id="whatsapp" 
+                type="tel" 
+                placeholder="Your WhatsApp number" 
+                required 
+                value={whatsappNumber} 
+                onChange={handleWhatsAppChange} 
+              />
             </div>
             
             <div className="space-y-2">
@@ -230,20 +300,49 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
                 </div>
               </RadioGroup>
 
-              {paymentMethod === "Other" && <Input placeholder="Specify payment method" value={otherPayment} onChange={e => setOtherPayment(e.target.value)} required />}
+              {paymentMethod === "Other" && (
+                <div className="space-y-2">
+                  <Input 
+                    placeholder="Specify payment method" 
+                    value={otherPayment} 
+                    onChange={e => setOtherPayment(e.target.value)} 
+                    required 
+                  />
+                  <Input 
+                    placeholder="Nama Atas Nama Rekening" 
+                    value={otherAccountName} 
+                    onChange={e => setOtherAccountName(e.target.value)} 
+                    required 
+                  />
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="paymentAccount">
                 Nomor Rekening / Ewallet
               </Label>
-              <Input id="paymentAccount" placeholder={isEwallet ? "e.g. 081234567890" : "e.g. 1234567890"} required value={paymentAccount} onChange={handlePaymentAccountChange} />
+              <Input 
+                id="paymentAccount" 
+                placeholder={isEwallet ? "e.g. 081234567890" : "e.g. 1234567890"} 
+                required 
+                value={paymentAccount} 
+                onChange={handlePaymentAccountChange} 
+              />
             </div>
 
-            {!isEwallet && paymentMethod && paymentMethod !== 'Other' && <div className="space-y-2">
+            {!isEwallet && paymentMethod && paymentMethod !== 'Other' && (
+              <div className="space-y-2">
                 <Label htmlFor="accountName">Atas Nama Rekening</Label>
-                <Input id="accountName" placeholder="e.g. John Doe" required value={accountName} onChange={e => setAccountName(e.target.value)} />
-              </div>}
+                <Input 
+                  id="accountName" 
+                  placeholder="e.g. John Doe" 
+                  required 
+                  value={accountName} 
+                  onChange={e => setAccountName(e.target.value)} 
+                />
+              </div>
+            )}
             
             <Button 
               type="submit" 
@@ -308,6 +407,8 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
           </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };
+
 export default ProfileCompletionForm;
