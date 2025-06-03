@@ -309,7 +309,7 @@ const ProfileCompletionForm: React.FC<ProfileCompletionFormProps> = ({
                     required 
                   />
                   <Input 
-                    placeholder="Nama Atas Nama Rekening" 
+                    placeholder="Nomer Atas Nama Rekening" 
                     value={otherAccountName} 
                     onChange={e => setOtherAccountName(e.target.value)} 
                     required 

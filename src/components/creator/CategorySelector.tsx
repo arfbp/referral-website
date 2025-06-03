@@ -14,7 +14,7 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({ selectedCategory, o
       defaultValue="anime" 
       value={selectedCategory}
       onValueChange={onChange}
-      className="flex space-x-4"
+      className="flex flex-wrap gap-4"
     >
       <div className="flex items-center space-x-2">
         <RadioGroupItem value="anime" id="anime" />
@@ -23,6 +23,14 @@ const CategorySelector: React.FC<CategorySelectorProps> = ({ selectedCategory, o
       <div className="flex items-center space-x-2">
         <RadioGroupItem value="game" id="game" />
         <Label htmlFor="game" className="text-white">Game</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="post-blog" id="post-blog" />
+        <Label htmlFor="post-blog" className="text-white">Post & Blog</Label>
+      </div>
+      <div className="flex items-center space-x-2">
+        <RadioGroupItem value="host-audioroom" id="host-audioroom" />
+        <Label htmlFor="host-audioroom" className="text-white">Host Audioroom</Label>
       </div>
       <div className="flex items-center space-x-2">
         <RadioGroupItem value="other" id="other" />

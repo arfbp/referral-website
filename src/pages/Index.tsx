@@ -4,10 +4,12 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import Logo from '@/components/Logo';
+import { useAuth } from '@/hooks/useAuth';
 
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, loading } = useAuth();
   
   useEffect(() => {
     // Check if user is logged in
@@ -32,6 +34,14 @@ const Index = () => {
       return;
     }
   }, [navigate, location]);
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/profile');
+    } else {
+      navigate('/login');
+    }
+  };
   
   return (
     <div className="min-h-screen">
@@ -39,15 +49,6 @@ const Index = () => {
       <header className="border-b bg-white shadow-sm">
         <div className="container max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
           <Logo />
-          
-          <div className="flex gap-2">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Login</Link>
-            </Button>
-            <Button className="bg-gradient-hero hover:opacity-90" asChild>
-              <Link to="/signup">Sign Up</Link>
-            </Button>
-          </div>
         </div>
       </header>
       
@@ -62,10 +63,14 @@ const Index = () => {
               Join our referral program and earn rewards by inviting your friends and colleagues.
               The more you share, the more you earn!
             </p>
-            <Button size="lg" className="bg-gradient-hero hover:opacity-90" asChild>
-              <Link to="/form" className="flex items-center gap-2">
+            <Button 
+              size="lg" 
+              className="bg-gradient-hero hover:opacity-90" 
+              onClick={handleGetStarted}
+            >
+              <span className="flex items-center gap-2">
                 Get Started <ArrowRight className="w-4 h-4" />
-              </Link>
+              </span>
             </Button>
           </div>
         </div>
