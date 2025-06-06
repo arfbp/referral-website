@@ -27,12 +27,22 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: 46.202.138.149
+          server: rsbcreatormanager.com 
           username: u859492031
           password: Xajh@1314
           server-dir: ${{ secrets.FTP_TARGET }}
           local-dir: ./dist/
 
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ftp://46.202.138.149
+          username: u859492031
+          password: Xajh@1314
+          server-dir: ${{ secrets.FTP_TARGET }}
+          local-dir: ./dist/
+
+          
       - name: Enable debug logs
         run: echo "debug=true" >> $GITHUB_ENV
    
