@@ -27,7 +27,7 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          server: rsbcreatormanager.com
+          server: 46.202.138.149
           username: u859492031
           password: Xajh@1314
           server-dir: ${{ secrets.FTP_TARGET }}
