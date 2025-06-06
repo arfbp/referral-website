@@ -33,4 +33,8 @@ jobs:
           server-dir: ${{ secrets.FTP_TARGET }}
           local-dir: ./dist/
 
+      - name: Enable debug logs
+        run: echo "debug=true" >> $GITHUB_ENV
+   
+
 
