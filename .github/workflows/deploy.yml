@@ -27,9 +27,9 @@ jobs:
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp://46.202.138.149
-          username: u859492031
-          password: Xajh@1314
+          server: ${{ secrets.FTP_HOSTNAME }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_TARGET }}
           local-dir: ./dist/
 
