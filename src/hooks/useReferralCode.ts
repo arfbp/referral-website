@@ -12,8 +12,14 @@ export const useReferralCode = () => {
     
     if (refCode) {
       setReferralCode(refCode);
-      // Store in session storage in case we need it later
+      // Store in session storage immediately when found
       sessionStorage.setItem('referralCode', refCode);
+    } else {
+      // Check if there's a stored referral code from previous visit
+      const storedRefCode = sessionStorage.getItem('referralCode');
+      if (storedRefCode) {
+        setReferralCode(storedRefCode);
+      }
     }
   }, [location.search]);
 
